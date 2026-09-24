@@ -1,0 +1,40 @@
+# 数据集（不提交到 git）
+data/
+*.zip
+
+# 模型权重
+runs/
+*.pth
+*.pt
+*.pkl
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+tensorboard/
+
+# 本地自动同步用的哈希清单（代码一改就过期，不该进仓库）
+sync_manifest.txt
+
+# 环境
+.env
+.venv/
+venv/

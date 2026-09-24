@@ -1,0 +1,42 @@
+# 项目3：文档版面分析系统 - 依赖
+#
+# torch / torchvision 由 AutoDL 镜像预装（2.1.2+cu121 / 0.16.2+cu121），不在这里列，
+# 免得 pip 去重新解析它们。
+
+# ⚠⚠ numpy 必须 < 2，这是硬约束，不要删。
+#   torch 2.1.2 发布于 numpy 2.0 之前，是针对 numpy 1.x 编译的。配 numpy 2.x 时
+#   `import torch` 会报 "Failed to initialize NumPy: _ARRAY_API not found"，
+#   随后任何 torch↔numpy 互操作（torch.from_numpy / as_tensor / tensor.numpy()）
+#   都直接 RuntimeError: Numpy is not available —— 而 dataset.py 和 evaluate.py 都在用。
+#   保留这个 pin 还能让环境自愈：谁再把它顶到 2.x，装一次 requirements 就降回 1.26.4。
+numpy>=1.24.0,<2.0
+
+# ⚠ opencv 必须 < 5：opencv-python 5.x 的元数据硬性要求 numpy>=2，
+#   和上面的 numpy<2（torch 2.1.2 的硬约束）不能并存。项目1 也 pin 了 <5。
+#   注意 AutoDL 环境里可能同时装着 opencv-python 和 opencv-python-headless 两个
+#   发行版，它们写同一份 cv2 模块文件 —— 若 pip check 报 opencv 冲突，先 pip list
+#   看是不是版本不一致的残留，用上面这条命令统一到 4.x 即可。
+opencv-python>=4.8.0,<5.0
+tqdm>=4.65.0
+Pillow>=9.5.0
+pycocotools>=2.0.6
+
+# ---- RT-DETR（HuggingFace transformers）----
+# 必须 pin 在 4.x：transformers 4.48/4.49 的 setup.py 是 torch>=2.0（2.1.2 满足），
+# 而 5.x 要求 torch>=2.4，装进来会直接不可用。
+# timm / safetensors / huggingface_hub / tokenizers 都是 transformers 的声明依赖，
+# pip 会自动装，不用显式列（rtdetr_r50vd 走 rt_detr_resnet，运行时不强需 timm）。
+transformers>=4.48.0,<4.50
+
+# ==================== AutoDL 安装步骤 ====================
+# AutoDL 镜像自带的 pip 源有时整个不服务（报 "from versions: none"，连 tqdm 都装不了），
+# 先换源：
+#   pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+#   pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+#
+# export HF_ENDPOINT=https://hf-mirror.com        # AutoDL 常连不上 huggingface.co
+# pip install -r requirements.txt
+# pip check                                       # 确认没有 numpy 版本冲突
+# python verify_pipeline.py                       # ← 必做，第一项就是校验 numpy/torch 互操作
+# huggingface-cli download PekingU/rtdetr_r50vd_coco_o365   # 预下载权重（约 170MB）
+# export HF_HUB_OFFLINE=1                         # verify_pipeline 全绿之后再设
