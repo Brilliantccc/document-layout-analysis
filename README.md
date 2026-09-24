@@ -287,7 +287,8 @@ python inference.py --weights runs/rtdetr/v1/best.pth --input ./test_images/ --o
 ├── data/                # 数据集（不提交）
 ├── runs/                # 训练输出（不提交）
 └── docs/
-    └── 项目计划.md       # 完整开发记录：踩过的坑、数据事实、目标口径更正
+    ├── 项目计划.md       # 完整开发记录：踩过的坑、数据事实、目标口径更正
+    └── modelscope/      # 两个 ModelScope 模型卡的原文（改完直接上传）
 ```
 
 ## 实现要点
